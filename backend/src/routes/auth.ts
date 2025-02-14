@@ -3,12 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
-const router = express.Router();
+const authRouter = express.Router();
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
 
 // Register
-router.post("/register", async (req:any, res:any) => {
+authRouter.post("/register", async (req:any, res:any) => {
   const { firstname, lastname, username, password } = req.body;  
 
   const existingUser = await prisma.user.findUnique({ where: { username } });
@@ -23,7 +23,7 @@ router.post("/register", async (req:any, res:any) => {
 });
 
 // Login
-router.post("/login", async (req:any, res:any) => {
+authRouter.post("/login", async (req:any, res:any) => {
   const { username, password } = req.body;
 
   const user = await prisma.user.findUnique({ where: { username } });
@@ -32,11 +32,11 @@ router.post("/login", async (req:any, res:any) => {
   }
 
   const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: "1h" });
-  res.json({ token, user: { firstname: user.firstname, lastname: user.lastname } });
+  res.json({ token, user: { firstname: user.firstname, lastname: user.lastname, username: user.username } });
 });
 
 // Reset Password
-router.post("/reset-password", async (req:any, res:any) => {
+authRouter.post("/reset-password", async (req:any, res:any) => {
   const { username, newPassword } = req.body;
   const user = await prisma.user.findUnique({ where: { username } });
 
@@ -48,4 +48,4 @@ router.post("/reset-password", async (req:any, res:any) => {
   res.json({ message: "Password updated successfully!" });
 });
 
-export default router;
+export default authRouter;
