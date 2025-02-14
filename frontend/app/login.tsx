@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { RelativePathString, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@/constants/environment";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -10,9 +11,9 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { username, password });
+      const res = await axios.post(`${API_URL}/api/auth/login`, { username, password });
       await AsyncStorage.setItem("token", res.data.token);
-      router.replace("/index" as RelativePathString);
+      router.replace("/dashboard" as RelativePathString);
     } catch (error) {
       Alert.alert("Error", "Invalid credentials");
     }

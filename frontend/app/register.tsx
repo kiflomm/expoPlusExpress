@@ -1,16 +1,22 @@
 import { View, Text, TextInput, Button, Alert } from "react-native";
 import { useState } from "react";
 import axios from "axios";
-import { router } from "expo-router";
-
+import { router, type RelativePathString } from "expo-router";
+import { API_URL } from "@/constants/environment";
 export default function Register() {
   const [form, setForm] = useState({ firstname: "", lastname: "", username: "", password: "" });
 
   const handleRegister = async () => {
     try {
-      await axios.post("http://localhost:8080/api/auth/register", form);
+      // check if the fields are empty
+      if (form.firstname === "" || form.lastname === "" || form.username === "" || form.password === "") {
+        Alert.alert("Error", "Please fill in all fields");
+        return;
+      }
+      
+      await axios.post(`${API_URL}/api/auth/register`, form);
       Alert.alert("Success", "Account Created!");
-      router.push("/login");
+      router.push("/login" as RelativePathString);
     } catch (error) {
       Alert.alert("Error", "Username already exists");
     }
