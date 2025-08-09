@@ -47,9 +47,9 @@ jobs:
       - name: Initialize EAS project
         working-directory: frontend
         run: |
-          eas init --id ${{ github.event.inputs.project_id }}
+          eas init --id ${{ github.event.inputs.project_id }} --non-interactive
 
       - name: Run EAS build
         working-directory: frontend
         run: |
-          eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} 
+          eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} --non-interactive
