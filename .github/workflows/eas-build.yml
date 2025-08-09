@@ -1,4 +1,5 @@
 name: EAS Build
+
 on:
   workflow_dispatch:
     inputs:
@@ -20,23 +21,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend # Ensures all run steps use frontend as working directory by default
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
           cache: 'npm'
+
       - name: Install dependencies
-        run: npm install
-        working-directory: ./frontend
+        run: npm ci
+
       - name: Setup EAS
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
           working-directory: ./frontend
+
       - name: Build app
         run: eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }}
-        working-directory: ./frontend
