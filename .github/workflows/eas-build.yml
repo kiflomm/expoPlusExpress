@@ -1,40 +1,29 @@
 name: EAS Build
-
 on:
-  workflow_dispatch:
-    inputs:
-      platform:
-        description: "Platform to build for (all, android, ios)"
-        required: true
-        default: "all"
-      profile:
-        description: "EAS build profile (e.g., production, preview)"
-        required: true
-        default: "production"
+  push:
+    branches:
+      - main
 
 jobs:
-  eas-build:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
-
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
-
-      - name: Set Expo token
-        run: echo "EXPO_TOKEN=${{ secrets.EXPO_TOKEN }}" >> $GITHUB_ENV
-
+          node-version: 20.x
+          cache: 'npm'
       - name: Install dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Run EAS build
-        working-directory: frontend
-        run: |
-          eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} --non-interactive
+        run: npm install
+        working-directory: ./frontend
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+          working-directory: ./frontend
+      - name: Build Android app
+        run: eas build --platform android --profile preview
+        working-directory: ./frontend
