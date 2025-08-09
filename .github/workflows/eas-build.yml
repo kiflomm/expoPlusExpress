@@ -1,8 +1,21 @@
 name: EAS Build
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Choose the build platform'
+        required: true
+        type: choice
+        options:
+          - android
+          - ios
+      profile:
+        description: 'Choose the build profile'
+        required: true
+        type: choice
+        options:
+          - preview
+          - production
 
 jobs:
   build:
@@ -24,6 +37,6 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
           working-directory: ./frontend
-      - name: Build Android app
-        run: eas build --platform android --profile preview
+      - name: Build app
+        run: eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }}
         working-directory: ./frontend
