@@ -52,4 +52,4 @@ jobs:
       - name: Run EAS build
         working-directory: frontend
         run: |
-          eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} --non-interactive
+          eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} 
