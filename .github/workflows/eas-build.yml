@@ -17,6 +17,10 @@ on:
         options:
           - preview
           - production
+      project_id:
+        description: 'Enter the EAS project ID'
+        required: true
+        type: string
 
 jobs:
   eas-build:
@@ -39,6 +43,11 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
+
+      - name: Initialize EAS project
+        working-directory: frontend
+        run: |
+          eas init --id ${{ github.event.inputs.project_id }} --non-interactive
 
       - name: Run EAS build
         working-directory: frontend
